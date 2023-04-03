@@ -2,7 +2,9 @@ package com.example.adoptaunamascotaapi.controller;
 
 import com.example.adoptaunamascotaapi.model.User;
 import com.example.adoptaunamascotaapi.repository.UserRepository;
+import com.example.adoptaunamascotaapi.security.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +32,21 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/login")
+    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String rawPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && PasswordUtil.hashPassword(rawPassword).equals(user.getPassword())) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
     @PostMapping("/")
     public User createUser(@RequestBody User user) {
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         return userRepository.save(user);
     }
+
     @PutMapping("/")
     public User updateUser(@RequestBody User user) {
         return userRepository.save(user);

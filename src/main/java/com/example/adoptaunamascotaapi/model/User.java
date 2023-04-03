@@ -18,6 +18,16 @@ public class User {
 
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public User() {
 
@@ -55,10 +65,11 @@ public class User {
         this.email = email;
     }
 
-    public User(Long id, String name, String surname, String email) {
+    public User(Long id, String name, String surname, String email,String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.password = password;
     }
 }
