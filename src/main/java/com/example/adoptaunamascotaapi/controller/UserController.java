@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://10.0.2.2:8080")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -33,13 +33,17 @@ public class UserController {
         }
     }
     @GetMapping("/login")
-    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String rawPassword) {
+    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String hashedPassword) {
         User user = userRepository.findByEmail(email);
-        if (user != null && PasswordUtil.hashPassword(rawPassword).equals(user.getPassword())) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        if (user != null) {
+            System.out.println("Server hashedPassword: " + user.getPassword());
+            System.out.println("Received hashedPassword: " + hashedPassword);
+
+            if (user.getPassword().equals(hashedPassword)) {
+                return ResponseEntity.ok(user);
+            }
         }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @PostMapping("/")
     public User createUser(@RequestBody User user) {
