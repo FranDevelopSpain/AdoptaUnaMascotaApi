@@ -1,14 +1,13 @@
 package com.example.adoptaunamascotaapi.controller;
-
 import com.example.adoptaunamascotaapi.model.User;
-import com.example.adoptaunamascotaapi.repository.UserRepository;
 import com.example.adoptaunamascotaapi.security.PasswordUtil;
+import com.example.adoptaunamascotaapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 @CrossOrigin(origins = "http://10.0.2.2:8080")
 @RestController
@@ -32,23 +31,25 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/login")
-    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String hashedPassword) {
+    @GetMapping("/auth")
+    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
             System.out.println("Server hashedPassword: " + user.getPassword());
-            System.out.println("Received hashedPassword: " + hashedPassword);
 
-            if (user.getPassword().equals(hashedPassword)) {
+            if (PasswordUtil.checkPassword(password, user.getPassword())) {
                 return ResponseEntity.ok(user);
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @PostMapping("/")
-    public User createUser(@RequestBody User user) {
-        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        return userRepository.save(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        System.out.println("Raw password: " + user.getPassword());
+        String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PutMapping("/")
