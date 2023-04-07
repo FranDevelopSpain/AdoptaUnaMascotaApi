@@ -20,9 +20,18 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
-
+    @Column
+    private boolean isAdmin;
     public String getPassword() {
         return password;
+    }
+
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
     public void setPassword(String password) {
