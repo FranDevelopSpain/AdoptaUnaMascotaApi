@@ -25,19 +25,15 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
 
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @GetMapping("/auth")
-    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String rawPassword) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
             System.out.println("Server hashedPassword: " + user.getPassword());
 
-            if (PasswordUtil.checkPassword(password, user.getPassword())) {
+            if (PasswordUtil.checkPassword(rawPassword, user.getPassword())) {
                 return ResponseEntity.ok(user);
             }
         }
@@ -46,9 +42,11 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        System.out.println("Raw password: " + user.getPassword());
+        System.out.println("Usuario: " + user.getEmail());
+        System.out.println("Contraseña sin Hash: " + user.getPassword());
         String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
         user.setPassword(hashedPassword);
+        System.out.println("Passsword Hash:" + hashedPassword);
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -75,22 +73,34 @@ public class UserController {
 
     @GetMapping("/admin/auth")
     public ResponseEntity<User> getAdminByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
-        User user = userRepository.findByEmail(email);
         User adminUser = userRepository.findByEmail("admin@mail.com");
-        if (user != null && user.getIsAdmin()) {
+        if (adminUser != null && adminUser.getIsAdmin()) {
             if (adminUser.getPassword().equals("admin")) {
-                return ResponseEntity.ok(user);
+                System.out.println("Usuario: "+adminUser.getEmail() + "Contraseña: "+adminUser.getPassword());
+                return ResponseEntity.ok(adminUser);
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
-
-
-
     @PutMapping("/")
     public User updateUser(@RequestBody User user) {
         return userRepository.save(user);
     }
+    @PostMapping("/updatePassword")
+    public ResponseEntity<User> updatePassword(@RequestParam String email, @RequestParam String newPassword) {
+        User user = userRepository.findByEmail(email);
+        System.out.println("Los datos son: "+user.getEmail() + " y " + user.getPassword());
+        if (user != null) {
+            String hashedPassword = PasswordUtil.hashPassword(newPassword);
+            System.out.println("La contraseña anterior era: = " + hashedPassword);
+            user.setPassword(hashedPassword);
+            System.out.println("La contraseña nueva es: = " + newPassword);
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
     @DeleteMapping("/")
     public void deleteUser(@RequestBody User user) {
         userRepository.delete(user);
