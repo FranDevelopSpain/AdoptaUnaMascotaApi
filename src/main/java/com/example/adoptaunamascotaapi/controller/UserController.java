@@ -28,12 +28,14 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @GetMapping("/auth")
-    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String rawPassword) {
+    public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
+        System.out.println("Entrando.....: "+email);
+        System.out.println("Entrando.....: "+password);
         User user = userRepository.findByEmail(email);
         if (user != null) {
             System.out.println("Server hashedPassword: " + user.getPassword());
 
-            if (PasswordUtil.checkPassword(rawPassword, user.getPassword())) {
+            if (PasswordUtil.checkPassword(password, user.getPassword())) {
                 return ResponseEntity.ok(user);
             }
         }
@@ -63,7 +65,7 @@ public class UserController {
             adminUser.setEmail(adminEmail);
             adminUser.setIsAdmin(true);
             String rawPassword = "admin";
-            adminUser.setPassword(rawPassword);
+            adminUser.setPassword(PasswordUtil.hashPassword(rawPassword));
             userRepository.save(adminUser);
             System.out.println("Usuario administrador creado con éxito.");
         } else {

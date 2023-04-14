@@ -31,6 +31,9 @@ public class PasswordUtil {
 
     public static boolean checkPassword(String rawPassword, String storedHashedPassword) {
         String hashedPassword = hashPassword(rawPassword);
+        System.out.println("RawPassword: " + rawPassword);
+        System.out.println("StoreHashedPassword: " + storedHashedPassword);
+
         return hashedPassword.equals(storedHashedPassword);
     }
 }
