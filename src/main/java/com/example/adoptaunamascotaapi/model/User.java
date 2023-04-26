@@ -1,9 +1,10 @@
 package com.example.adoptaunamascotaapi.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 
 @Entity
-@Table(name = "users")
+@Table(name = "Users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,6 +23,15 @@ public class User {
     private String password;
     @Column
     private boolean isAdmin;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -40,14 +50,6 @@ public class User {
 
     public User() {
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
