@@ -17,19 +17,21 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    //Para obtener los usuarios
     @GetMapping("/")
     public List<User> getUsers() {
         List<User> users = userRepository.findAll();
         System.out.println("getUsers: " + users.size() + " usuarios encontrados");
         return users;
     }
-
+    //Para obtener los usuarios por su ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
 
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    //Para obtener los usuarios autentificados
     @GetMapping("/auth")
     public ResponseEntity<User> getUserByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
         System.out.println("Entrando.....: "+email);
@@ -45,16 +47,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        System.out.println("Usuario: " + user.getEmail());
-        System.out.println("Contraseña sin Hash: " + user.getPassword());
-        String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
-        user.setPassword(hashedPassword);
-        System.out.println("Passsword Hash:" + hashedPassword);
-        userRepository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    //Para obtener la autentificación del admin
+
+    @GetMapping("/admin/auth")
+    public ResponseEntity<User> getAdminByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
+        User adminUser = userRepository.findByEmail("admin@mail.com");
+        if (adminUser != null && adminUser.getIsAdmin()) {
+            if (adminUser.getPassword().equals("admin")) {
+                System.out.println("Usuario: "+adminUser.getEmail() + "Contraseña: "+adminUser.getPassword());
+                return ResponseEntity.ok(adminUser);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
+    //Autogenera el usuario admin si no existe
+
     @PostConstruct
     public void createAdminIfNotExist() {
         String adminEmail = "admin@mail.com";
@@ -76,21 +83,20 @@ public class UserController {
         }
     }
 
-    @GetMapping("/admin/auth")
-    public ResponseEntity<User> getAdminByEmailAndPassword(@RequestParam String email, @RequestParam String password) {
-        User adminUser = userRepository.findByEmail("admin@mail.com");
-        if (adminUser != null && adminUser.getIsAdmin()) {
-            if (adminUser.getPassword().equals("admin")) {
-                System.out.println("Usuario: "+adminUser.getEmail() + "Contraseña: "+adminUser.getPassword());
-                return ResponseEntity.ok(adminUser);
-            }
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    //CRUD USUARIOS
+
+
+    @PostMapping("/")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        System.out.println("Usuario: " + user.getEmail());
+        System.out.println("Contraseña sin Hash: " + user.getPassword());
+        String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
+        user.setPassword(hashedPassword);
+        System.out.println("Passsword Hash:" + hashedPassword);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
-    @PutMapping("/")
-    public User updateUser(@RequestBody User user) {
-        return userRepository.save(user);
-    }
+
     @PostMapping("/updatePassword")
     public ResponseEntity<User> updatePassword(@RequestParam String email, @RequestParam String newPassword) {
         User user = userRepository.findByEmail(email);
@@ -106,14 +112,31 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    @DeleteMapping("/")
-    public void deleteUser(@RequestBody User user) {
-        userRepository.delete(user);
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User updatedUser) {
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setName(updatedUser.getName());
+            user.setSurname(updatedUser.getSurname());
+            user.setEmail(updatedUser.getEmail());
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
-    @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id){
-        userRepository.deleteById(id);
-        return "User Deleted Successfully";
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
 }
