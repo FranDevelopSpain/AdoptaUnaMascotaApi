@@ -1,11 +1,8 @@
 package com.example.adoptaunamascotaapi.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,13 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class Animal {
-
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "animal_seq")
     @SequenceGenerator(name = "animal_seq", sequenceName = "animal_seq", allocationSize = 1)
 
-    private Long id;
 
     @Column
     private String categoria;
