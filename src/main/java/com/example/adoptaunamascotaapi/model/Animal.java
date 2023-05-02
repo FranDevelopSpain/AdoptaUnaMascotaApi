@@ -39,6 +39,17 @@ public class Animal {
 
     @Column
     private String descripcion;
+    @Column
+    private String type;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String species;
+
+    @Column
+    private int image;
 
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
