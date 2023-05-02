@@ -19,8 +19,11 @@ public class UserController {
 
     @GetMapping("/")
     public List<User> getUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        System.out.println("getUsers: " + users.size() + " usuarios encontrados");
+        return users;
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -112,4 +115,5 @@ public class UserController {
         userRepository.deleteById(id);
         return "User Deleted Successfully";
     }
+
 }

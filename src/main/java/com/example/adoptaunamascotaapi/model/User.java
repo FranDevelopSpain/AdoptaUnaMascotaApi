@@ -1,6 +1,5 @@
 package com.example.adoptaunamascotaapi.model;
-
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 @Entity
