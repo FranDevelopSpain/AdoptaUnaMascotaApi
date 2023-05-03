@@ -32,7 +32,7 @@ public class Animal {
     private String nombre;
 
     @Column
-    private LocalDate fechaNacimiento;
+    private int edad;
 
     @Column
     private String raza;
