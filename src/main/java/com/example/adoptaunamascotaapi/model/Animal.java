@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table
@@ -20,13 +19,9 @@ public class Animal {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "animal_seq")
     @SequenceGenerator(name = "animal_seq", sequenceName = "animal_seq", allocationSize = 1)
-
-
+    
     @Column
     private String categoria;
-
-    @Column
-    private String subcategoria;
 
     @Column
     private String nombre;
@@ -39,6 +34,7 @@ public class Animal {
 
     @Column
     private String descripcion;
+
     @Column
     private String type;
 
@@ -49,7 +45,10 @@ public class Animal {
     private String species;
 
     @Column
-    private int image;
+    @Lob
+    private byte[] image;
 
+    @Column(name = "fecha_creacion")
+    private Date fechaCreacion;
 
 }
