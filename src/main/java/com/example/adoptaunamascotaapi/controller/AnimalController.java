@@ -16,13 +16,12 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://10.0.2.2:8080")
 @RestController
-@RequestMapping("/api/animals")
+@RequestMapping("/api/animals/")
 public class AnimalController {
 
     @Autowired
     private AnimalRepository animalRepository;
 
-    // Para obtener los animales
     @GetMapping("/")
     public List<Animal> getAnimals() {
         List<Animal> animals = animalRepository.findAll();
@@ -30,31 +29,16 @@ public class AnimalController {
         return animals;
     }
 
-    // Para obtener los animales por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Animal> getAnimalById(@PathVariable Long id) {
         Optional<Animal> animal = animalRepository.findById(id);
-
         return animal.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // CRUD ANIMALES
-
     @PostMapping("/")
-    public ResponseEntity<Animal> createAnimal(@RequestParam("animal") String animalJson, @RequestParam("image") MultipartFile imageFile) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Animal animal = objectMapper.readValue(animalJson, Animal.class);
-
-            byte[] imageByteArray = imageFile.getBytes();
-            animal.setImage(imageByteArray);
-
-            animalRepository.save(animal);
-            return ResponseEntity.status(HttpStatus.CREATED).body(animal);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<Animal> createAnimal(@RequestBody Animal newAnimal) {
+        animalRepository.save(newAnimal);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newAnimal);
     }
 
     @PutMapping("/{id}")
@@ -63,7 +47,9 @@ public class AnimalController {
 
         if (optionalAnimal.isPresent()) {
             Animal animal = optionalAnimal.get();
-            animal.setNombre(updatedAnimal.getNombre());
+            animal.setCategory(updatedAnimal.getCategory());
+            animal.setRaza(updatedAnimal.getRaza());
+            animal.setDescripcion(updatedAnimal.getDescripcion());
             animal.setType(updatedAnimal.getType());
             animalRepository.save(animal);
             return ResponseEntity.ok(animal);
@@ -82,19 +68,4 @@ public class AnimalController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-    @GetMapping("/image/{id}")
-    public ResponseEntity<byte[]> getAnimalImage(@PathVariable Long id) {
-        Optional<Animal> animal = animalRepository.findById(id);
-
-        if (animal.isPresent()) {
-            byte[] image = animal.get().getImage();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            return new ResponseEntity<>(image, headers, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
 }

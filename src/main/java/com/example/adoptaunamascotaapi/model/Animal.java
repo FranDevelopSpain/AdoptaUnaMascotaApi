@@ -13,24 +13,22 @@ import java.util.Date;
 @Data
 public class Animal {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "animal_seq")
+    @SequenceGenerator(name = "animal_seq", sequenceName = "animal_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "animal_seq")
-    @SequenceGenerator(name = "animal_seq", sequenceName = "animal_seq", allocationSize = 1)
-    
     @Column
-    private String categoria;
+    private String name;
 
     @Column
-    private String nombre;
-
-    @Column
-    private int edad;
+    private String category;
 
     @Column
     private String raza;
+
+    @Column
+    private int age;
 
     @Column
     private String descripcion;
@@ -46,7 +44,7 @@ public class Animal {
 
     @Column
     @Lob
-    private byte[] image;
+    private String image;
 
     @Column(name = "fecha_creacion")
     private Date fechaCreacion;
