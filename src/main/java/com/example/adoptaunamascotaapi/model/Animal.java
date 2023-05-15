@@ -22,7 +22,7 @@ public class Animal {
     private String name;
 
     @Column
-    private String category;
+    private String categoria;
 
     @Column
     private String raza;
@@ -42,8 +42,7 @@ public class Animal {
     @Column
     private String species;
 
-    @Column
-    @Lob
+    @Column(length =10485760)
     private String image;
 
     @Column(name = "fecha_creacion")

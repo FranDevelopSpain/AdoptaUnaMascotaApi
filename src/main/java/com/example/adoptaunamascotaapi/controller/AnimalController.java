@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://10.0.2.2:8080")
 @RestController
-@RequestMapping("/api/animals/")
+@RequestMapping("/api/animals")
 public class AnimalController {
 
     @Autowired
@@ -47,7 +47,7 @@ public class AnimalController {
 
         if (optionalAnimal.isPresent()) {
             Animal animal = optionalAnimal.get();
-            animal.setCategory(updatedAnimal.getCategory());
+            animal.setCategoria(updatedAnimal.getCategoria());
             animal.setRaza(updatedAnimal.getRaza());
             animal.setDescripcion(updatedAnimal.getDescripcion());
             animal.setType(updatedAnimal.getType());
