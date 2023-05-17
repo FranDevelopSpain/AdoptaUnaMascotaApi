@@ -47,10 +47,12 @@ public class AnimalController {
 
         if (optionalAnimal.isPresent()) {
             Animal animal = optionalAnimal.get();
+            animal.setNombre(updatedAnimal.getNombre());
             animal.setCategoria(updatedAnimal.getCategoria());
+            animal.setSubcategoria(updatedAnimal.getSubcategoria());
             animal.setRaza(updatedAnimal.getRaza());
+            animal.setSexo(updatedAnimal.getSexo());
             animal.setDescripcion(updatedAnimal.getDescripcion());
-            animal.setType(updatedAnimal.getType());
             animalRepository.save(animal);
             return ResponseEntity.ok(animal);
         } else {

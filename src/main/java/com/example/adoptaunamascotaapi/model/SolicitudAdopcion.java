@@ -4,8 +4,6 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,16 +21,10 @@ public class SolicitudAdopcion {
     private Long idAnimal;
 
     @Column
-    private Long idUsuario;
-
-    @Column
     private String nombre;
 
     @Column
     private String apellidos;
-
-    @Column
-    private LocalDate fechaNacimiento;
 
     @Column
     private String telefono;

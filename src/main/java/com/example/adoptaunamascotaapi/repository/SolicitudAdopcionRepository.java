@@ -10,9 +10,4 @@ import java.util.List;
 @Repository
 public interface SolicitudAdopcionRepository extends JpaRepository<SolicitudAdopcion, Long> {
 
-    List<SolicitudAdopcion> findByIdAnimalOrderByFechaCreacionDesc(Long idAnimal);
-
-    List<SolicitudAdopcion> findAllByOrderByFechaCreacionDesc();
-
-    List<SolicitudAdopcion> findByIdUsuarioOrderByFechaCreacionDesc(Long idUsuario);
 }

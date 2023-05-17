@@ -17,35 +17,19 @@ public class Animal {
     @SequenceGenerator(name = "animal_seq", sequenceName = "animal_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
-
     @Column
-    private String name;
-
+    private String nombre;
     @Column
     private String categoria;
-
+    @Column
+    private String subcategoria;
     @Column
     private String raza;
-
     @Column
-    private int age;
-
+    private String sexo;
     @Column
     private String descripcion;
-
-    @Column
-    private String type;
-
-    @Column
-    private String gender;
-
-    @Column
-    private String species;
-
     @Column(length =10485760)
     private String image;
-
-    @Column(name = "fecha_creacion")
-    private Date fechaCreacion;
 
 }
