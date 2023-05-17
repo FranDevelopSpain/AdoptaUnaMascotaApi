@@ -29,6 +29,9 @@ public class Animal {
     private String sexo;
     @Column
     private String descripcion;
+    private String tamaño;
+    @Column
+    private Integer edad;
     @Column(length =10485760)
     private String image;
 
