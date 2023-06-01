@@ -1,32 +1,54 @@
 package com.example.adoptaunamascotaapi.model;
+import javax.persistence.*;
 
-import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
 
 @Entity
-@Table(name = "users")
+@Table(name = "Users")
 public class User {
-    @jakarta.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-
-
     @Column(name = "name")
     private String name;
 
+    @Column(name = "surname")
+    private String surname;
+
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
+    @Column
+    private boolean isAdmin;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public User() {
+
     }
 
     public String getName() {
@@ -37,6 +59,14 @@ public class User {
         this.name = name;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -45,9 +75,11 @@ public class User {
         this.email = email;
     }
 
-    public User(Long id, String name, String email) {
+    public User(Long id, String name, String surname, String email,String password) {
         this.id = id;
         this.name = name;
+        this.surname = surname;
         this.email = email;
+        this.password = password;
     }
 }
